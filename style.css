@@ -1,0 +1,108 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Comic Neue', cursive;
+}
+
+body{
+    overflow:hidden;
+    touch-action:none;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+
+    background-image:url("fondo.jpg");
+    background-size:cover;
+    background-position:center;
+
+    position:relative;
+    overflow:hidden;
+}
+
+#duck{
+    width:180px;
+
+    position:absolute;
+
+    bottom:20px;
+    left:50%;
+}
+
+.item{
+    width:120px;
+
+    position:absolute;
+}
+
+#score{
+    position:absolute;
+
+    top:15px;
+    left:15px;
+
+    color:white;
+
+    font-size:32px;
+
+    text-shadow:3px 3px 8px black;
+
+    z-index:100;
+}
+
+#vidas{
+    position:absolute;
+
+    top:60px;
+    left:15px;
+
+    color:white;
+
+    font-size:28px;
+
+    text-shadow:3px 3px 8px black;
+
+    z-index:100;
+}
+
+#gameOver{
+    display:none;
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    text-align:center;
+
+    z-index:1000;
+}
+
+#gameOver h1{
+    color:white;
+
+    font-size:50px;
+
+    margin-bottom:20px;
+
+    text-shadow:4px 4px 10px black;
+}
+
+#restartBtn{
+
+    padding:15px 35px;
+
+    border:none;
+
+    border-radius:20px;
+
+    font-size:24px;
+
+    background:white;
+
+    cursor:pointer;
+}
