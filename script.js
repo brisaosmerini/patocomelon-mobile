@@ -18,216 +18,123 @@ let musicaIniciada = false;
 let duckX = window.innerWidth / 2;
 
 function iniciarMusica(){
-
     if(!musicaIniciada){
-
         musica.play();
-
         musicaIniciada = true;
     }
 }
 
 function actualizarVidas(){
-
-    vidasText.textContent =
-    "Vidas: " + vidas;
-
+    vidasText.textContent = "Vidas: " + vidas;
     if(vidas <= 0){
-
         gameOver = true;
-
-        gameOverText.style.display =
-        "block";
+        gameOverText.style.display = "block";
     }
 }
 
+
+function getHitbox(el, reduccion){
+    const r = el.getBoundingClientRect();
+    const dx = r.width * reduccion / 2;
+    const dy = r.height * reduccion / 2;
+    return {
+        left:   r.left   + dx,
+        right:  r.right  - dx,
+        top:    r.top    + dy,
+        bottom: r.bottom - dy
+    };
+}
+
 game.addEventListener("touchstart",(e)=>{
-
     iniciarMusica();
-
     let dedo = e.touches[0];
-
-    duckX =
-    dedo.clientX -
-    duck.offsetWidth/2;
-
-    duck.style.left =
-    duckX + "px";
+    duckX = dedo.clientX - duck.offsetWidth / 2;
+    duck.style.left = duckX + "px";
 });
 
 game.addEventListener("touchmove",(e)=>{
-
     let dedo = e.touches[0];
-
-    duckX =
-    dedo.clientX -
-    duck.offsetWidth/2;
-
-    if(duckX < 0){
-
-        duckX = 0;
+    duckX = dedo.clientX - duck.offsetWidth / 2;
+    if(duckX < 0) duckX = 0;
+    if(duckX > window.innerWidth - duck.offsetWidth){
+        duckX = window.innerWidth - duck.offsetWidth;
     }
-
-    if(
-        duckX >
-        window.innerWidth -
-        duck.offsetWidth
-    ){
-
-        duckX =
-        window.innerWidth -
-        duck.offsetWidth;
-    }
-
-    duck.style.left =
-    duckX + "px";
+    duck.style.left = duckX + "px";
 });
 
 function crearObjeto(){
-
     if(gameOver) return;
 
-    const item =
-    document.createElement("img");
-
-    const tipo =
-    Math.floor(Math.random()*3);
+    const item = document.createElement("img");
+    const tipo = Math.floor(Math.random() * 3);
 
     if(tipo === 0){
-
         item.src = "pez.png";
-
-        item.dataset.tipo =
-        "pez";
-
-    }else if(tipo === 1){
-
-        item.src =
-        "impostor.png";
-
-        item.dataset.tipo =
-        "malo";
-
-    }else{
-
-        item.src =
-        "impostor2.png";
-
-        item.dataset.tipo =
-        "malo";
+        item.dataset.tipo = "pez";
+    } else if(tipo === 1){
+        item.src = "impostor.png";
+        item.dataset.tipo = "malo";
+    } else {
+        item.src = "impostor2.png";
+        item.dataset.tipo = "malo";
     }
 
     item.classList.add("item");
 
-    let x =
-    Math.random() *
-    (window.innerWidth - 120);
-
-    item.style.left =
-    x + "px";
-
-    item.style.top =
-    "-120px";
-
+    let x = Math.random() * (window.innerWidth - 120);
+    item.style.left = x + "px";
+    item.style.top = "-120px";
     game.appendChild(item);
 
     let y = -120;
 
-    const caer =
-    setInterval(()=>{
-
+    const caer = setInterval(()=>{
         if(gameOver){
-
             clearInterval(caer);
             return;
         }
 
         y += 8;
+        item.style.top = y + "px";
 
-        item.style.top =
-        y + "px";
-
-        const duckRect =
-        duck.getBoundingClientRect();
-
-        const itemRect =
-        item.getBoundingClientRect();
+        // Hitbox reducida 35% para el pato, 20% para los items
+        const duckRect = getHitbox(duck, 0.35);
+        const itemRect = getHitbox(item, 0.20);
 
         if(
-
-            duckRect.left <
-            itemRect.right &&
-
-            duckRect.right >
-            itemRect.left &&
-
-            duckRect.top <
-            itemRect.bottom &&
-
-            duckRect.bottom >
-            itemRect.top
-
+            duckRect.left   < itemRect.right  &&
+            duckRect.right  > itemRect.left   &&
+            duckRect.top    < itemRect.bottom &&
+            duckRect.bottom > itemRect.top
         ){
-
-            if(
-                item.dataset.tipo
-                === "pez"
-            ){
-
+            if(item.dataset.tipo === "pez"){
                 score++;
-
-                scoreText.textContent =
-                "Puntos: " + score;
-
-            }else{
-
-                gameOver = true;
-
-                gameOverText.style.display =
-                "block";
+                scoreText.textContent = "Puntos: " + score;
+            } else {
+                vidas--;
+                actualizarVidas();
             }
-
             item.remove();
-
             clearInterval(caer);
         }
 
         if(y > window.innerHeight){
-
-            if(
-                item.dataset.tipo
-                === "pez"
-            ){
-
+            if(item.dataset.tipo === "pez"){
                 vidas--;
-
                 actualizarVidas();
             }
-
             item.remove();
-
             clearInterval(caer);
         }
 
-    },16);
+    }, 16);
 }
 
-setInterval(
-    crearObjeto,
-    700
-);
+setInterval(crearObjeto, 700);
 
-document.addEventListener(
-"click",
-(e)=>{
 
-    if(
-        e.target.id
-        ===
-        "restartBtn"
-    ){
-
+document.addEventListener("click",(e)=>{
+    if(e.target.closest("#restartBtn")){
         location.reload();
     }
-
 });
